@@ -1,0 +1,143 @@
+public class Chelovek {
+    private String imya;
+    private Transport tekushchiyTransport;
+
+    public Chelovek(String imya) {
+        this.imya = imya;
+        this.tekushchiyTransport = null; // Изначально человек идет пешком
+    }
+
+    public void ustanovitTransport(Transport transport) {
+        if (transport != null) {
+            System.out.println(imya + " сел на " + transport.getTip());
+        } else {
+            System.out.println(imya + " слез с транспорта.");
+        }
+        this.tekushchiyTransport = transport;
+    }
+
+    public void peredvigsya(String mestnost, int rasstoyanie) {
+        if (tekushchiyTransport == null) {
+            System.out.println(imya + " идет пешком по " + mestnost + " на расстояние " + rasstoyanie + " км.");
+        } else if (tekushchiyTransport.peredvigsya(mestnost, rasstoyanie)) {
+            System.out.println(imya + " переместился на " + tekushchiyTransport.getTip() + " по " + mestnost + " на расстояние " + rasstoyanie + " км.");
+        } else {
+            System.out.println("Невозможно переместиться на " + tekushchiyTransport.getTip() + " по " + mestnost + ".");
+        }
+    }
+}
+
+public abstract class Transport {
+    protected String tip;
+
+    public String getTip() {
+        return tip;
+    }
+
+    public abstract boolean peredvigsya(String mestnost, int rasstoyanie);
+}
+
+public class Mashina extends Transport {
+    private int toplivo;
+
+    public Mashina(int toplivo) {
+        this.tip = "Машина";
+        this.toplivo = toplivo;
+    }
+
+    @Override
+    public boolean peredvigsya(String mestnost, int rasstoyanie) {
+        if (mestnost.equals("густой лес") || mestnost.equals("болото")) {
+            return false;
+        }
+        if (toplivo >= rasstoyanie) {
+            toplivo -= rasstoyanie;
+            return true;
+        } else {
+            System.out.println("Недостаточно бензина.");
+            return false;
+        }
+    }
+}
+
+public class Loshad extends Transport {
+    private int vydderzhka;
+
+    public Loshad(int vydderzhka) {
+        this.tip = "Лошадь";
+        this.vydderzhka = vydderzhka;
+    }
+
+    @Override
+    public boolean peredvigsya(String mestnost, int rasstoyanie) {
+        if (mestnost.equals("болото")) {
+            return false;
+        }
+        if (vydderzhka >= rasstoyanie) {
+            vydderzhka -= rasstoyanie;
+            return true;
+        } else {
+            System.out.println("Лошадь устала.");
+            return false;
+        }
+    }
+}
+
+public class Velosiped extends Transport {
+    public Velosiped() {
+        this.tip = "Велосипед";
+    }
+
+    @Override
+    public boolean peredvigsya(String mestnost, int rasstoyanie) {
+        return !mestnost.equals("болото");
+    }
+}
+
+public class Vezdehod extends Transport {
+    private int toplivo;
+
+    public Vezdehod(int toplivo) {
+        this.tip = "Вездеход";
+        this.toplivo = toplivo;
+    }
+
+    @Override
+    public boolean peredvigsya(String mestnost, int rasstoyanie) {
+        if (toplivo >= rasstoyanie) {
+            toplivo -= rasstoyanie;
+            return true;
+        } else {
+            System.out.println("Недостаточно бензина для вездехода.");
+            return false;
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Chelovek chelovek = new Chelovek("Гоша");
+
+        Mashina mashina = new Mashina(60);
+        Loshad loshad = new Loshad(25);
+        Velosiped velosiped = new Velosiped();
+        Vezdehod vezdehod = new Vezdehod(120);
+
+        chelovek.ustanovitTransport(mashina);
+        chelovek.peredvigsya("густой лес", 18);
+        chelovek.peredvigsya("болото", 6);
+
+        chelovek.ustanovitTransport(velosiped);
+        chelovek.peredvigsya("равнина", 12);
+        chelovek.peredvigsya("болото", 35);
+
+        chelovek.ustanovitTransport(loshad);
+        chelovek.peredvigsya("равнина", 5);
+        chelovek.peredvigsya("болото", 15);
+
+
+        chelovek.ustanovitTransport(vezdehod);
+        chelovek.peredvigsya("болото", 100);
+
+    }
+}
